@@ -1,0 +1,35 @@
+version: "3.8"
+services:
+  hotel_reservation_app:
+    container_name: hotel_reservation_app
+    build:
+      context: .
+      dockerfile: ./docker/php/Dockerfile
+    ports:
+      - "9000:9000"
+    volumes:
+      - .:/usr/src/app
+      - ./public:/usr/src/app/public
+    depends_on:
+      - hotel_reservation_db
+    networks:
+      - app_network
+
+  hotel_reservation_db:
+    container_name: hotel_reservation_db
+    image: mysql:8.0.20
+    restart: always
+    volumes:
+      - ./storage/db-data:/var/lib/mysql
+    ports:
+      - "3307:3307"
+    environment:
+      MYSQL_DATABASE: hotel_reservation_mysql_db
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+    networks:
+      - app_network
+networks:
+  app_network:
+    driver: bridge
